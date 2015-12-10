@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:bind="http://schemas.android.com/apk/res-auto"
+  >
+
+  <!--class用来自定义自动生成的Binding类名,没有class会默认生成和类名类似的binding,eg. ActivityMainBinding-->
+  <data class="MainBinding">
+
+    <!--alias可以用来区分同名的类-->
+    <import
+      alias="CoderA"
+      type="me.onez.databinding.model.Coder"
+      />
+
+    <import type="me.onez.databinding.model.CoderPro1" />
+
+    <import type="me.onez.databinding.model.CoderPro2" />
+
+    <variable
+      name="coder"
+      type="CoderA"
+      />
+
+    <variable
+      name="coderPro1"
+      type="CoderPro1"
+      />
+
+    <variable
+      name="coderPro2"
+      type="CoderPro2"
+      />
+
+  </data>
+
+  <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="me.onez.databinding.MainActivity"
+    >
+
+    <TextView
+      android:id="@+id/text"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentLeft="true"
+      android:text="@{coder.name}"
+      android:textColor="@android:color/background_dark"
+      android:textSize="20sp"
+      />
+
+
+    <TextView
+      android:id="@+id/textp"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:text="@{coderPro1.name}"
+      android:textColor="@android:color/background_dark"
+      android:textSize="20sp"
+      />
+
+
+    <TextView
+      android:id="@+id/text2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/text"
+      android:layout_marginTop="20dp"
+      android:text="@{coder.gender}"
+      android:textColor="@android:color/background_dark"
+      android:textSize="20sp"
+      />
+
+    <TextView
+      android:id="@+id/text2P"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignBottom="@id/text2"
+      android:layout_below="@id/text"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="20dp"
+      android:text="@{coderPro1.gender}"
+      android:textColor="@android:color/background_dark"
+      android:textSize="20sp"
+      />
+
+    <TextView
+      android:id="@+id/text3"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/text2"
+      android:layout_marginTop="20dp"
+      android:text="@{coder.info}"
+      android:textColor="@android:color/background_dark"
+      android:textSize="20sp"
+      />
+
+    <TextView
+      android:id="@+id/text3P"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignBottom="@id/text3"
+      android:layout_below="@id/text2"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="20dp"
+      android:text="@{coderPro1.info}"
+      android:textColor="@android:color/background_dark"
+      android:textSize="20sp"
+      />
+
+
+    <Button
+      android:id="@+id/btn_do"
+      android:layout_width="match_parent"
+      android:layout_height="60dp"
+      android:layout_alignParentBottom="true"
+      android:text="@{coder.actionName}"
+      />
+
+    <Button
+      android:id="@+id/btn_test"
+      android:layout_width="match_parent"
+      android:layout_height="60dp"
+      android:layout_above="@id/btn_do"
+      android:text="@{coderPro2.actionName}"
+      />
+
+    <Button
+      android:id="@+id/btn_click_binding"
+      android:layout_width="match_parent"
+      android:layout_height="60dp"
+      android:layout_above="@id/btn_test"
+      android:text="Click binding"
+      bind:onClickListener="@{coderPro2.onClickListener}"
+      />
+
+  </RelativeLayout>
+</layout>
+
