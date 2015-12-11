@@ -2,34 +2,17 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:bind="http://schemas.android.com/apk/res-auto"
   >
-
   <!--class用来自定义自动生成的Binding类名,没有class会默认生成和类名类似的binding,eg. ActivityMainBinding-->
   <data class="MainBinding">
-
     <!--alias可以用来区分同名的类-->
-    <import
-      alias="CoderA"
-      type="me.onez.databinding.model.Coder"
-      />
-
+    <import alias="CoderA" type="me.onez.databinding.model.Coder" />
     <import type="me.onez.databinding.model.CoderPro1" />
-
     <import type="me.onez.databinding.model.CoderPro2" />
 
-    <variable
-      name="coder"
-      type="CoderA"
-      />
-
-    <variable
-      name="coderPro1"
-      type="CoderPro1"
-      />
-
-    <variable
-      name="coderPro2"
-      type="CoderPro2"
-      />
+    <!--会自动生成相应的setter eg. binding.setCoder()-->
+    <variable name="coder" type="CoderA" />
+    <variable name="coderPro1" type="CoderPro1" />
+    <variable name="coderPro2" type="CoderPro2" />
 
   </data>
 

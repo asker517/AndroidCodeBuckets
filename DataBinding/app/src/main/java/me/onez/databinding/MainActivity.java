@@ -14,6 +14,8 @@ public class MainActivity extends AppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    //用 DatabindingUtil.setContentView() 来替换掉 setContentView()
+    // 然后创建一个相应XXX对象，通过 binding.setXXX(xxx) 与 variable 进行绑定。
     final MainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
     final Coder coder = new Coder();
@@ -53,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
         coderPro1.setName("New Vincent pro1");
         coderPro1.setGender("New Male pro1");
         coderPro1.setInfo("New coder pro1");
-
       }
     });
   }
