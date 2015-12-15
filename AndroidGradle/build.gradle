@@ -23,22 +23,20 @@ task clean(type: Delete) {
 }
 //工程中gradle 全局配置
 ext {
-  ext {
-    android = [
-        applicationId    : "com.tencent.nbagametime",
-        compileSdkVersion: 23,
-        buildToolsVersion: "23.0.2",
-        minSdkVersion    : 14,
-        targetSdkVersion : 22,
-        versionCode      : 1,
-        versionName      : "v1.0"
-    ]
+  android = [
+      applicationId    : "me.onez.androidgradle",
+      compileSdkVersion: 23,
+      buildToolsVersion: "23.0.2",
+      minSdkVersion    : 14,
+      targetSdkVersion : 22,
+      versionCode      : 1,
+      versionName      : "v1.0"
+  ]
 
-    dependencies = [
-        "support-v4"     : "com.android.support:support-v4:23.1.1",
-        "appcompat-v7"   : "com.android.support:appcompat-v7:23.1.1",
-        "support-design" : "com.android.support:design:23.1.1",
-        "recyclerview-v7": "com.android.support:recyclerview-v7:23.1.1"
-    ]
-  }
+  dependencies = [
+      "support-v4"     : "com.android.support:support-v4:23.1.1",
+      "appcompat-v7"   : "com.android.support:appcompat-v7:23.1.1",
+      "support-design" : "com.android.support:design:23.1.1",
+      "recyclerview-v7": "com.android.support:recyclerview-v7:23.1.1"
+  ]
 }

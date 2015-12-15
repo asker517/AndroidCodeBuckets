@@ -78,7 +78,7 @@ android {
     applicationVariants.all { variant ->
       variant.outputs.each { output ->
         output.outputFile = new File(output.outputFile.parent + "/${variant.buildType.name}",
-            "appNAME_v${variant.versionName}_${releaseTime()}_${variant.buildType.name}.apk")
+            "app_v${variant.versionName}_${releaseTime()}_${variant.buildType.name}.apk")
       }
     }
 
