@@ -68,6 +68,7 @@ public class MainActivity extends BaseRxActivity {
   }
 
   //////////////////////////////////////
+  //利用observable.compose(transformer)复用操作符
   private void composeMode() {
     Observable.just("2").map(new Func1<String, Integer>() {
       @Override public Integer call(String s) {
