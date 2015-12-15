@@ -1,0 +1,5 @@
+<resources>
+  <string name="app_name">AndroidGradle</string>
+  <string name="app_name_debug">AndroidGradleDebug</string>
+  <string name="app_name_preview">AndroidGradlePreview</string>
+</resources>
