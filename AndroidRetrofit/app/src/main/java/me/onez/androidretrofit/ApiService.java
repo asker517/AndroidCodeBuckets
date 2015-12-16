@@ -19,7 +19,5 @@ public final class ApiService {
 
     @GET("microservice/cityinfo") Observable<CityInfo> getCityInfoRx(
         @Query("cityname") String cityName);
-
-
   }
 }

@@ -2,7 +2,12 @@ package me.onez.rxinandroid;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import rx.Observable;
+import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -15,6 +20,13 @@ public class MainActivity extends BaseRxActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+    findViewById(R.id.tv_click).setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        //useFlatMap();
+        useConcatMap();
+      }
+    });
   }
 
   /**
@@ -58,7 +70,6 @@ public class MainActivity extends BaseRxActivity {
       }
 
       @Override public void onError(Throwable e) {
-
       }
 
       @Override public void onNext(Integer integer) {
@@ -106,5 +117,99 @@ public class MainActivity extends BaseRxActivity {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
       }
     };
+  }
+
+  /**
+   * Merge操作符将多个Observable发射的数据整合起来发射，
+   * 就如同是一个Observable发射的数据一样。发射数据是无序的
+   */
+  private void useMerge() {
+    Observable.merge(observable(), observable())
+        .subscribeOn(Schedulers.newThread())
+        .subscribe(new Observer<String>() {
+          @Override public void onCompleted() {
+
+          }
+
+          @Override public void onError(Throwable e) {
+
+          }
+
+          @Override public void onNext(String s) {
+
+          }
+        });
+  }
+
+  /**
+   * Concat操作符将多个Observable发射的数据整合起来发射，
+   * 就如同是一个Observable发射的数据一样。发射数据是有序的
+   */
+  private void useConcat() {
+    Observable.concat(observable(), observable())
+        .subscribeOn(Schedulers.newThread())
+        .subscribe(new Observer<String>() {
+          @Override public void onCompleted() {
+
+          }
+
+          @Override public void onError(Throwable e) {
+
+          }
+
+          @Override public void onNext(String s) {
+
+          }
+        });
+  }
+
+  private List<Integer> nums = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+
+  /**
+   * flatMap得到最终结果是无序的
+   */
+  private void useFlatMap() {
+    Observable.from(nums).flatMap(new Func1<Integer, Observable<Integer>>() {
+      @Override public Observable<Integer> call(Integer integer) {
+        return Observable.just(integer.intValue() * integer.intValue())
+            .subscribeOn(Schedulers.io());
+      }
+    }).subscribe(new Observer<Integer>() {
+      @Override public void onCompleted() {
+
+      }
+
+      @Override public void onError(Throwable e) {
+
+      }
+
+      @Override public void onNext(Integer integer) {
+        Log.d(TAG, "onNext: " + integer);
+      }
+    });
+  }
+
+  /**
+   * concatMap得到的最终结果是有序的
+   */
+  private void useConcatMap() {
+    Observable.from(nums).concatMap(new Func1<Integer, Observable<Integer>>() {
+      @Override public Observable<Integer> call(Integer integer) {
+        return Observable.just(integer.intValue() * integer.intValue())
+            .subscribeOn(Schedulers.io());
+      }
+    }).subscribe(new Observer<Integer>() {
+      @Override public void onCompleted() {
+
+      }
+
+      @Override public void onError(Throwable e) {
+
+      }
+
+      @Override public void onNext(Integer integer) {
+        Log.d(TAG, "onNext: " + integer.intValue());
+      }
+    });
   }
 }
