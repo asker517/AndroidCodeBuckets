@@ -3,9 +3,11 @@ package me.onez.rxinandroid;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -17,14 +19,17 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseRxActivity {
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
     findViewById(R.id.tv_click).setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
+      @Override
+      public void onClick(View v) {
         //useFlatMap();
-        useConcatMap();
+        //        useConcatMap();
+        doOnNextThreadTest();
       }
     });
   }
@@ -42,7 +47,8 @@ public class MainActivity extends BaseRxActivity {
     observable().subscribe(onNextAction());
     // 自动创建 Subscriber ，并使用 onNextAction 和 onErrorAction 来定义 onNext() 和 onError()
     observable().subscribe(onNextAction(), onErrorAction());
-    // 自动创建 Subscriber ，并使用 onNextAction、 onErrorAction 和 onCompletedAction 来定义 onNext()、 onError() 和 onCompleted()
+    // 自动创建 Subscriber ，并使用 onNextAction、 onErrorAction 和 onCompletedAction 来定义 onNext()、 onError
+    // () 和 onCompleted()
     observable().subscribe(onNextAction(), onErrorAction(), onCompletedAction());
   }
 
@@ -51,28 +57,34 @@ public class MainActivity extends BaseRxActivity {
    */
   private void shedulerMode() {
     Observable.create(new Observable.OnSubscribe<String>() {
-      @Override public void call(Subscriber<? super String> subscriber) {
+      @Override
+      public void call(Subscriber<? super String> subscriber) {
         // TODO: 15/12/11 in io Thread
         subscriber.onNext("1");
         subscriber.onCompleted();
       }
     }).subscribeOn(Schedulers.io()).doOnSubscribe(new Action0() {
-      @Override public void call() {
+      @Override
+      public void call() {
         // TODO: 15/12/11 in UI Thread
       }
     }).subscribeOn(AndroidSchedulers.mainThread()).map(new Func1<String, Integer>() {
-      @Override public Integer call(String s) {
+      @Override
+      public Integer call(String s) {
         return Integer.parseInt(s);
       }
     }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Integer>() {
-      @Override public void onCompleted() {
+      @Override
+      public void onCompleted() {
         Log.d(TAG, "onCompleted: ");
       }
 
-      @Override public void onError(Throwable e) {
+      @Override
+      public void onError(Throwable e) {
       }
 
-      @Override public void onNext(Integer integer) {
+      @Override
+      public void onNext(Integer integer) {
         Log.d(TAG, "onNext: " + integer.intValue());
       }
     });
@@ -82,21 +94,25 @@ public class MainActivity extends BaseRxActivity {
   //利用observable.compose(transformer)复用操作符
   private void composeMode() {
     Observable.just("2").map(new Func1<String, Integer>() {
-      @Override public Integer call(String s) {
+      @Override
+      public Integer call(String s) {
         return Integer.parseInt(s);
       }
     }).compose(transformer()).subscribe(new Action1<Integer>() {
-      @Override public void call(Integer integer) {
+      @Override
+      public void call(Integer integer) {
         Log.d(TAG, "call: " + integer.intValue());
       }
     });
 
-    Observable.from(new String[] { "1", "2", "0" }).map(new Func1<String, Integer>() {
-      @Override public Integer call(String s) {
+    Observable.from(new String[]{"1", "2", "0"}).map(new Func1<String, Integer>() {
+      @Override
+      public Integer call(String s) {
         return Integer.parseInt(s) + 10086;
       }
     }).compose(transformer()).subscribe(new Action1<Integer>() {
-      @Override public void call(Integer integer) {
+      @Override
+      public void call(Integer integer) {
         Log.d(TAG, "call: " + integer.intValue());
       }
     });
@@ -109,9 +125,11 @@ public class MainActivity extends BaseRxActivity {
    */
   private Observable.Transformer<Integer, Integer> transformer() {
     return new Observable.Transformer<Integer, Integer>() {
-      @Override public Observable<Integer> call(Observable<Integer> integerObservable) {
+      @Override
+      public Observable<Integer> call(Observable<Integer> integerObservable) {
         return integerObservable.filter(new Func1<Integer, Boolean>() {
-          @Override public Boolean call(Integer integer) {
+          @Override
+          public Boolean call(Integer integer) {
             return integer.intValue() >= 1;
           }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
@@ -127,15 +145,18 @@ public class MainActivity extends BaseRxActivity {
     Observable.merge(observable(), observable())
         .subscribeOn(Schedulers.newThread())
         .subscribe(new Observer<String>() {
-          @Override public void onCompleted() {
+          @Override
+          public void onCompleted() {
 
           }
 
-          @Override public void onError(Throwable e) {
+          @Override
+          public void onError(Throwable e) {
 
           }
 
-          @Override public void onNext(String s) {
+          @Override
+          public void onNext(String s) {
 
           }
         });
@@ -149,15 +170,18 @@ public class MainActivity extends BaseRxActivity {
     Observable.concat(observable(), observable())
         .subscribeOn(Schedulers.newThread())
         .subscribe(new Observer<String>() {
-          @Override public void onCompleted() {
+          @Override
+          public void onCompleted() {
 
           }
 
-          @Override public void onError(Throwable e) {
+          @Override
+          public void onError(Throwable e) {
 
           }
 
-          @Override public void onNext(String s) {
+          @Override
+          public void onNext(String s) {
 
           }
         });
@@ -170,20 +194,24 @@ public class MainActivity extends BaseRxActivity {
    */
   private void useFlatMap() {
     Observable.from(nums).flatMap(new Func1<Integer, Observable<Integer>>() {
-      @Override public Observable<Integer> call(Integer integer) {
+      @Override
+      public Observable<Integer> call(Integer integer) {
         return Observable.just(integer.intValue() * integer.intValue())
             .subscribeOn(Schedulers.io());
       }
     }).subscribe(new Observer<Integer>() {
-      @Override public void onCompleted() {
+      @Override
+      public void onCompleted() {
 
       }
 
-      @Override public void onError(Throwable e) {
+      @Override
+      public void onError(Throwable e) {
 
       }
 
-      @Override public void onNext(Integer integer) {
+      @Override
+      public void onNext(Integer integer) {
         Log.d(TAG, "onNext: " + integer);
       }
     });
@@ -194,21 +222,67 @@ public class MainActivity extends BaseRxActivity {
    */
   private void useConcatMap() {
     Observable.from(nums).concatMap(new Func1<Integer, Observable<Integer>>() {
-      @Override public Observable<Integer> call(Integer integer) {
+      @Override
+      public Observable<Integer> call(Integer integer) {
         return Observable.just(integer.intValue() * integer.intValue())
             .subscribeOn(Schedulers.io());
       }
     }).subscribe(new Observer<Integer>() {
-      @Override public void onCompleted() {
+      @Override
+      public void onCompleted() {
 
       }
 
-      @Override public void onError(Throwable e) {
+      @Override
+      public void onError(Throwable e) {
 
       }
 
-      @Override public void onNext(Integer integer) {
+      @Override
+      public void onNext(Integer integer) {
         Log.d(TAG, "onNext: " + integer.intValue());
+      }
+    });
+  }
+
+	/**
+	 * doOnNext测试
+	 */
+	private void doOnNextThreadTest() {
+    observable().doOnNext(new Action1<String>() {
+      @Override
+      public void call(String s) {
+        Log.d(TAG, "call0: "+Thread.currentThread().getName());
+      }
+    }).subscribeOn(Schedulers.io()).doOnNext(new Action1<String>() {
+      @Override
+      public void call(String s) {
+        Log.d(TAG, "call1: " + Thread.currentThread().getName());
+      }
+    }).observeOn(Schedulers.io()).doOnNext(new Action1<String>() {
+      @Override
+      public void call(String s) {
+        Log.d(TAG, "call2: " + Thread.currentThread().getName());
+      }
+    }).observeOn(AndroidSchedulers.mainThread()).doOnNext(new Action1<String>() {
+      @Override
+      public void call(String s) {
+        Log.d(TAG, "call3: " + Thread.currentThread().getName());
+      }
+    }).subscribe(new Observer<String>() {
+      @Override
+      public void onCompleted() {
+
+      }
+
+      @Override
+      public void onError(Throwable e) {
+
+      }
+
+      @Override
+      public void onNext(String s) {
+        Log.d(TAG, "call4: " + Thread.currentThread().getName());
       }
     });
   }
