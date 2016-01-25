@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import java.util.concurrent.TimeUnit;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -31,6 +32,8 @@ public class MainActivity extends BaseRxActivity {
         //useConcatMap();
         //doOnNextThreadTest();
         //onErrorHandleTest();
+        mergeTest();
+        //concatTest();
       }
     });
   }
@@ -189,6 +192,61 @@ public class MainActivity extends BaseRxActivity {
   }
 
   private List<Integer> nums = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+  private List<Integer> nums1 = new ArrayList<>(Arrays.asList(11, 22, 33, 44, 55, 66, 77));
+
+  /**
+   * Merge最终的结果可能会出现乱序,并不是按照顺序产生结果,本次产生结果如下:
+   * 0,0,10,20,20,40,30,60,40,80 数据交错
+   */
+  private void mergeTest() {
+    Observable<Long> observable1 =
+        Observable.interval(0, 1000, TimeUnit.MILLISECONDS).map(new Func1<Long, Long>() {
+          @Override
+          public Long call(Long aLong) {
+            return aLong * 10;
+          }
+        }).take(5);
+    Observable<Long> observable2 =
+        Observable.interval(500, 1000, TimeUnit.MILLISECONDS).map(new Func1<Long, Long>() {
+          @Override
+          public Long call(Long aLong) {
+            return aLong * 20;
+          }
+        }).take(5);
+    Observable.merge(observable1, observable2).subscribe(new Action1<Long>() {
+      @Override
+      public void call(Long aLong) {
+        Log.d(TAG, "onNext call: " + aLong.longValue());
+      }
+    });
+  }
+
+  /**
+   * concat会按照顺序合并得到最后结果 本次结果如下:
+   * 0,10,20,30,40 ,0,20,40,60,80 有序执行完第一个observable1,然后执行observable2
+   */
+  private void concatTest() {
+    Observable<Long> observable1 =
+        Observable.interval(0, 1000, TimeUnit.MILLISECONDS).map(new Func1<Long, Long>() {
+          @Override
+          public Long call(Long aLong) {
+            return aLong * 10;
+          }
+        }).take(5);
+    Observable<Long> observable2 =
+        Observable.interval(500, 1000, TimeUnit.MILLISECONDS).map(new Func1<Long, Long>() {
+          @Override
+          public Long call(Long aLong) {
+            return aLong * 20;
+          }
+        }).take(5);
+    Observable.concat(observable1, observable2).subscribe(new Action1<Long>() {
+      @Override
+      public void call(Long aLong) {
+        Log.d(TAG, "onNext call: " + aLong.longValue());
+      }
+    });
+  }
 
   /**
    * flatMap得到最终结果是无序的
