@@ -31,8 +31,8 @@ public class MainActivity extends BaseRxActivity {
         //useFlatMap();
         //useConcatMap();
         //doOnNextThreadTest();
-        //onErrorHandleTest();
-        mergeTest();
+        onErrorHandleTest();
+        //mergeTest();
         //concatTest();
       }
     });
@@ -397,6 +397,7 @@ public class MainActivity extends BaseRxActivity {
 
       @Override
       public void onError(Throwable e) {
+        //不再回调这里
         Log.d(TAG, "onError: " + e.getMessage());
       }
 
