@@ -22,7 +22,8 @@ public class BaseRxActivity extends AppCompatActivity {
    */
   protected Observable<String> observable() {
     return Observable.create(new Observable.OnSubscribe<String>() {
-      @Override public void call(Subscriber<? super String> subscriber) {
+      @Override
+      public void call(Subscriber<? super String> subscriber) {
         subscriber.onNext("String result");
         //subscriber.onNext("Another String result");
         //subscriber.onError();
@@ -38,15 +39,18 @@ public class BaseRxActivity extends AppCompatActivity {
    */
   protected Subscriber<String> observer() {
     return new Subscriber<String>() {
-      @Override public void onCompleted() {
+      @Override
+      public void onCompleted() {
         Log.d(TAG, "onCompleted");
       }
 
-      @Override public void onError(Throwable e) {
+      @Override
+      public void onError(Throwable e) {
         Log.d(TAG, "onError: " + e.getMessage());
       }
 
-      @Override public void onNext(String s) {
+      @Override
+      public void onNext(String s) {
         Log.d(TAG, "onNext: " + s);
       }
     };
@@ -57,7 +61,8 @@ public class BaseRxActivity extends AppCompatActivity {
   protected Action1<String> onNextAction() {
     return new Action1<String>() {
       // onNext()
-      @Override public void call(String s) {
+      @Override
+      public void call(String s) {
         Log.d(TAG, s);
       }
     };
@@ -66,7 +71,8 @@ public class BaseRxActivity extends AppCompatActivity {
   protected Action1<Throwable> onErrorAction() {
     return new Action1<Throwable>() {
       // onError()
-      @Override public void call(Throwable throwable) {
+      @Override
+      public void call(Throwable throwable) {
         // Error handling
       }
     };
@@ -75,11 +81,11 @@ public class BaseRxActivity extends AppCompatActivity {
   protected Action0 onCompletedAction() {
     return new Action0() {
       // onCompleted()
-      @Override public void call() {
+      @Override
+      public void call() {
         Log.d(TAG, "onCompleted");
       }
     };
   }
   ///////////////////////////////////////////////////////////////////////////
-
 }

@@ -3,11 +3,9 @@ package me.onez.rxinandroid;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import java.util.concurrent.TimeUnit;
 import rx.Observable;
 import rx.Observer;
@@ -31,9 +29,11 @@ public class MainActivity extends BaseRxActivity {
         //useFlatMap();
         //useConcatMap();
         //doOnNextThreadTest();
-        onErrorHandleTest();
+        //onErrorHandleTest();
         //mergeTest();
         //concatTest();
+        //backPressureTest();
+        backPressureTest2();
       }
     });
   }
@@ -406,5 +406,85 @@ public class MainActivity extends BaseRxActivity {
         Log.d(TAG, "onNext: " + integer.intValue());
       }
     });
+  }
+
+  private void backPressureTest() {
+    Observable.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        //.onBackpressureDrop()
+        .subscribe(new Observer<Integer>() {
+          @Override
+          public void onCompleted() {
+
+          }
+
+          @Override
+          public void onError(Throwable e) {
+
+          }
+
+          @Override
+          public void onNext(Integer integer) {
+            try {
+              Thread.sleep(3000);
+              Log.d(TAG, "onNext: " + integer.intValue());
+            } catch (InterruptedException e) {
+              e.toString();
+            }
+          }
+        });
+  }
+
+  Integer[] arr = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+  private void backPressureTest2() {
+    Observable.from(arr).filter(new Func1<Integer, Boolean>() {
+      @Override
+      public Boolean call(Integer integer) {
+        try {
+          Thread.sleep(1000);
+          Log.d(TAG, "filterValue: " + integer.intValue());
+        } catch (InterruptedException e) {
+          e.toString();
+        }
+        return integer.intValue() < 10;
+      }
+    }).doOnTerminate(new Action0() {
+      @Override
+      public void call() {
+        Log.d(TAG, "doOnTerminate: ");
+      }
+    }).doOnNext(new Action1<Integer>() {
+      @Override
+      public void call(Integer integer) {
+        Log.d(TAG, "doOnNext: " + integer.intValue());
+      }
+    }).toList().subscribe(new Action1<List<Integer>>() {
+      @Override
+      public void call(List<Integer> integers) {
+        Log.d(TAG, "call: " + integers);
+      }
+    });
+    //.onBackpressureDrop()
+    //.subscribe(new Observer<Integer>() {
+    //  @Override
+    //  public void onCompleted() {
+    //
+    //  }
+    //
+    //  @Override
+    //  public void onError(Throwable e) {
+    //
+    //  }
+    //
+    //  @Override
+    //  public void onNext(Integer integer) {
+    //    //try {
+    //    //  Thread.sleep(3000);
+    //    Log.d(TAG, "onNext: " + integer.intValue());
+    //    //} catch (InterruptedException e) {
+    //    //  e.toString();
+    //    //}
+    //  }
+    //});
   }
 }

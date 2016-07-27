@@ -1,4 +1,4 @@
-package me.onez.rxinandroid;
+package me.onez.androiddagger2;
 
 import org.junit.Test;
 
