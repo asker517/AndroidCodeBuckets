@@ -458,7 +458,13 @@ public class MainActivity extends BaseRxActivity {
       public void call(Integer integer) {
         Log.d(TAG, "doOnNext: " + integer.intValue());
       }
-    }).toList().subscribe(new Action1<List<Integer>>() {
+    }).toList().doOnCompleted(new Action0() {
+      @Override
+      public void call() {
+        //this called after subscribe
+        Log.d(TAG, "call: toList() is finished");
+      }
+    }).subscribe(new Action1<List<Integer>>() {
       @Override
       public void call(List<Integer> integers) {
         Log.d(TAG, "call: " + integers);
