@@ -24,7 +24,6 @@ class Presenter(var d1: DependencyA?, var d2: DependencyB?, var d3: DependencyC?
    * 多个构造器只能标注其中一个
    */
 
-
   @Inject
   constructor(d1: DependencyA) : this(d1, null, null) {
 
@@ -32,6 +31,20 @@ class Presenter(var d1: DependencyA?, var d2: DependencyB?, var d3: DependencyC?
 
     Log.d("ZDT", "DependencyA constructor called")
 
+  }
+
+  /**
+   * 方法注入
+   * 当Presenter构造器调用后马上会触发调用
+   */
+  @Inject
+  fun setDenpendencyA(dependencyA: DependencyA) {
+    this.dependencyA = dependencyA
+  }
+
+  @Inject
+  fun bindHolders(dependencyA: DependencyA){
+    dependencyA.bindHolder(this)
   }
 
   fun doSomething() {

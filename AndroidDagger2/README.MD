@@ -68,3 +68,57 @@ public @interface Qualifier {
     > 局限性: 如果有多个构造器，我们只能标注其中一个，无法标注多个
 
     [Demo Code](file:///Users/Vincent/Github/AndroidCodeBuckets/AndroidDagger2/app/src/main/java/me/onez/androiddagger2/Presenter.kt)
+2. 方法注入
+    > 该方法不能是抽象方法，不能用`private`修饰
+    ```java
+    private lateinit var dependencyA: DependencyA
+
+    @Inject
+    fun setDenpendencyA(dependencyA: DependencyA) {
+      this.dependencyA = dependencyA
+    }
+    ```
+    > 如果目的是注入属性的话，方法注入和属性注入基本没有区别，属性注入是Dagger2中使用最多的一个注入方式。但是在某些特殊情况下会用到方法注入，如当我们希望传入类的当前实例（this引用）到被注入的依赖中。方法注入会在构造器调用后马上被调用，所以这表示我们可以传入完全被构造的this。
+
+3. 属性注入
+    > 注解在属性中表示该属性需要依赖注入，不能使用`private`修饰
+    ```java
+    @Inject
+    lateinit var presenter: Presenter
+    ```
+
+*`Dagger2容器先调用属性注入，然后再方法注，如:`*
+```java
+  @Inject
+  lateinit var dependencyA: DependencyA
+
+   @Inject
+   fun setDenpendencyA(dependencyA: DependencyA) {
+     this.dependencyA = dependencyA
+   }
+```
+*`dependencyA 会注入两次,两次注入的 dependencyA 也不相同`*
+
+# @Module
+> 使用@Inject标记构造器提供依赖是有局限性的，比如说我们需要注入的对象是第三方库提供的，我们无法在第三方库的构造器上加上@Inject注解。
+  或者，我们使用依赖倒置的时候，因为需要注入的对象是抽象的，@Inject也无法使用，因为抽象的类并不能实例化，所以该注解与`@Provides`结合为Dagger2提供依赖关系，用于不能用@Inject提供依赖的地方。
+# @Provides
+> `@Provides`仅能注解方法，且方法所在类要有`@Module`注解。注解后的方法表示Dagger2能用该方法实例对象提供依赖。按照惯例，`@Provides`方法的命名以provide为前缀，方便阅读管理。
+
+[Demo Code](file:///Users/Vincent/Github/AndroidCodeBuckets/AndroidDagger2/app/src/main/java/me/onez/androiddagger2/dagger2/DemoModule.kt)
+
+# @Component
+> 一般用来注解接口，被注解的接口在编译时会生成相应的实例，实例名称一般以Dagger为前缀，作为所需注入依赖和提供依赖之间的桥梁，把提供的依赖注入到所需注入的依赖中。Component中一般使用两种方式定义方法:
+1. `void inject(目标类 obj): `Dagger2会从目标类开始查找@Inject注解，自动生成依赖注入的代码，调用inject可完成依赖的注入。
+2. `Object getObj(): `Dagger2会到提供依赖注入类中找被@Inject注解标注的构造器，自动生成提供注入类的依赖的代码，这种方式一般为其他Component提供依赖。
+> `Componet`可以指定多个module,也可以依赖其他`Component`
+
+# @Qualifier和@Named
+> @Qualifier是限定符，而@Named则是基于String的限定符。当我有两个相同的依赖（都继承某一个父类或者都是先某一个接口）可以提供给高层时，那么程序就不知道我们到底要提供哪一个依赖，因为它找到了两个。这时候我们就可以通过限定符为两个依赖分别打上标记，指定提供某个依赖。
+[Demo Code](file:///Users/Vincent/Github/AndroidCodeBuckets/AndroidDagger2/app/src/main/java/me/onez/androiddagger2/dagger2/DemoModule.kt)
+
+* `@Qualifier`的作用和`@Named`是完全一样的，不过更推荐使用`@Qualifier`，因为@Named需要手写字符串，容易出错。
+* `@Qualifier`不是直接注解在属性上的，而是用来自定义注解的。[Demo Code](file:///Users/Vincent/Github/AndroidCodeBuckets/AndroidDagger2/app/src/main/java/me/onez/androiddagger2/dagger2/AnnoC.kt)
+
+# @Scope和@Singleton
+> @Scope和@Qualifier一样是用来自定义注解的，控制所提供依赖的生命周期，使提供的依赖可以做到与视图的生命周期相同、局部单例或者是全局单例等。而@Singleton则是@Scope的默认实现。
