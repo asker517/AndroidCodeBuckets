@@ -11,7 +11,6 @@ import javax.inject.Inject
  */
 class Presenter(var d1: DependencyA?, var d2: DependencyB?, var d3: DependencyC?) {
 
-  private lateinit var dependencyA: DependencyA
 
   @Inject
   constructor() : this(null, null, null) {
@@ -24,32 +23,51 @@ class Presenter(var d1: DependencyA?, var d2: DependencyB?, var d3: DependencyC?
    * 多个构造器只能标注其中一个
    */
 
-  @Inject
-  constructor(d1: DependencyA) : this(d1, null, null) {
+  //  @Inject
+  //  constructor(d1: DependencyA) : this(d1, null, null) {
+  //
+  //    dependencyA = d1
+  //    Log.d("ZDT", dependencyA.toString())
+  //  }
 
-    dependencyA = d1
 
-    Log.d("ZDT", "DependencyA constructor called")
+  //  @Inject
+  //  constructor(@Named("CC") d3: DependencyC) : this(null, null, d3) {
+  //    Log.d("ZDT", d3.toString())
+  //  }
 
-  }
+//  @Inject
+//  constructor(@CDepend d3: DependencyC) : this(null, null, d3) {
+//    Log.d("ZDT", d3.toString())
+//  }
 
   /**
    * 方法注入
    * 当Presenter构造器调用后马上会触发调用
    */
-  @Inject
-  fun setDenpendencyA(dependencyA: DependencyA) {
-    this.dependencyA = dependencyA
-  }
+
+  //这种情况,等同于属性注入 NO PRIVATE
+  //  @Inject
+  //  lateinit var dependencyA: DependencyA
+
+  private lateinit var dependencyA: DependencyA
 
   @Inject
-  fun bindHolders(dependencyA: DependencyA){
-    dependencyA.bindHolder(this)
+  fun setDependencyA(dependencyA: DependencyA) {
+    this.dependencyA = dependencyA
+    Log.d("ZDT", "setDependencyA is called ")
+    Log.d("ZDT", d1.toString())
   }
+
+
+  //
+  //  @Inject
+  //  fun bindHolders(dependencyA: DependencyA){
+  //    dependencyA.bindHolder(this)
+  //  }
 
   fun doSomething() {
-    Log.d("ZDT", "doSomething function called")
+    Log.d("ZDT", "doSomething function called, dependencyA is :" + dependencyA?.toString())
   }
-
 
 }

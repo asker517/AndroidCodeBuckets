@@ -70,7 +70,7 @@ public @interface Qualifier {
     [Demo Code](file:///Users/Vincent/Github/AndroidCodeBuckets/AndroidDagger2/app/src/main/java/me/onez/androiddagger2/Presenter.kt)
 2. 方法注入
     > 该方法不能是抽象方法，不能用`private`修饰
-    ```java
+    ```
     private lateinit var dependencyA: DependencyA
 
     @Inject
@@ -82,13 +82,13 @@ public @interface Qualifier {
 
 3. 属性注入
     > 注解在属性中表示该属性需要依赖注入，不能使用`private`修饰
-    ```java
+    ```kotlin
     @Inject
     lateinit var presenter: Presenter
     ```
 
 *`Dagger2容器先调用属性注入，然后再方法注，如:`*
-```java
+```kotlin
   @Inject
   lateinit var dependencyA: DependencyA
 
@@ -113,6 +113,22 @@ public @interface Qualifier {
 2. `Object getObj(): `Dagger2会到提供依赖注入类中找被@Inject注解标注的构造器，自动生成提供注入类的依赖的代码，这种方式一般为其他Component提供依赖。
 > `Componet`可以指定多个module,也可以依赖其他`Component`
 
+`@Component`中的依赖:
+
+- dependency
+
+    [Demo Code](file:///Users/Vincent/Github/AndroidCodeBuckets/AndroidDagger2/app/src/main/java/me/onez/androiddagger2/DepDagger2Activity.kt)
+
+- @Subcomponent
+> dependency和@SubComponent都可以实现相同的依赖结果，@SubComponent更多用于其subcomponent作为component的扩展的时候。
+譬如很多工具类都需要使用到Application的Context对象，此时就可以用一个Component负责提供，我们可以命名为AppComponent。需要用到的context对象的SharePreferenceComponent，ToastComponent就可以它作为Subcomponent存在了。而在AppComponent中，我们可以很清晰的看到有哪些子Component。
+
+[Demo Code](file:///Users/Vincent/Github/AndroidCodeBuckets/AndroidDagger2/app/src/main/java/me/onez/androiddagger2/SubDagger2Activity.kt)
+
+##### Component dependencies和SubComponent区别
+1. Component dependencies 能单独使用，而Subcomponent必须由Component调用方法获取。
+2. Component dependencies 可以很清楚的得知他依赖哪个Component， 而Subcomponent不能
+
 # @Qualifier和@Named
 > @Qualifier是限定符，而@Named则是基于String的限定符。当我有两个相同的依赖（都继承某一个父类或者都是先某一个接口）可以提供给高层时，那么程序就不知道我们到底要提供哪一个依赖，因为它找到了两个。这时候我们就可以通过限定符为两个依赖分别打上标记，指定提供某个依赖。
 [Demo Code](file:///Users/Vincent/Github/AndroidCodeBuckets/AndroidDagger2/app/src/main/java/me/onez/androiddagger2/dagger2/DemoModule.kt)
@@ -121,4 +137,20 @@ public @interface Qualifier {
 * `@Qualifier`不是直接注解在属性上的，而是用来自定义注解的。[Demo Code](file:///Users/Vincent/Github/AndroidCodeBuckets/AndroidDagger2/app/src/main/java/me/onez/androiddagger2/dagger2/AnnoC.kt)
 
 # @Scope和@Singleton
-> @Scope和@Qualifier一样是用来自定义注解的，控制所提供依赖的生命周期，使提供的依赖可以做到与视图的生命周期相同、局部单例或者是全局单例等。而@Singleton则是@Scope的默认实现。
+> @Scope和@Singleton，控制所提供依赖的生命周期，使提供的依赖可以做到与视图的生命周期相同、局部单例或者是全局单例等。而@Singleton则是@Scope的默认实现。[Demo Code](file:///Users/Vincent/Github/AndroidCodeBuckets/AndroidDagger2/app/src/main/java/me/onez/androiddagger2/dagger2/LocalScope.kt)
+1. 父Component有scope则子Component也必须有scope，而且不能和父scope一样
+2. @Scope是需要成对存在的，在Module的Provide方法中使用了@Scope，那么对应的Component中也必须使用@Scope注解，当两边的@Scope名字一样时（比如同为@Singleton）, 那么该Provide方法提供的依赖将会在Component中保持“局部单例”。
+   而在Component中标注@Scope，provide方法没有标注，那么这个Scope就不会起作用，而Component上的Scope的作用也只是为了能顺利通过编译
+
+单例实现方式:
+
+1. 依赖在Component中是单例的（供该依赖的provide方法和对应的Component类使用同一个Scope注解。）
+2. 对应的Component在App中只初始化一次，每次注入依赖都使用这个Component对象。（在Application中创建该Component）
+
+使用总结:
+
+1. @Component关联的@Module中的任何一个@Provides有@scope，则该整个@Component要加上这个scope。否则在暴露或者注入时会报错
+2. @Component的dependencies与@Component自身的scope不能相同，即组件之间的scope不能相同
+3. @Singleton的组件不能依赖其他scope的组件，但是其他scope的组件可以依赖@Singleton组件
+4. 没有scope的不能依赖有scope的组件
+5. 一个component不能同时有多个scope(Subcomponent除外)

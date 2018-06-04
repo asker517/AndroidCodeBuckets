@@ -2,6 +2,7 @@ package me.onez.androiddagger2.dagger2
 
 import dagger.Module
 import dagger.Provides
+import me.onez.androiddagger2.misc.DependencyA
 import me.onez.androiddagger2.misc.DependencyB
 import me.onez.androiddagger2.misc.DependencyC
 import javax.inject.Named
@@ -13,9 +14,16 @@ import javax.inject.Named
 class DemoModule {
 
   @Provides
+  fun provideDependencyA(): DependencyA {
+    return DependencyA("AAA")
+  }
+
+  @Provides
   fun provideDependencyB(): DependencyB {
     return DependencyB("BBB")
   }
+
+
 
   @Provides
   @Named("C")
@@ -27,6 +35,12 @@ class DemoModule {
   @Named("CC")
   fun provideDependencyCC(): DependencyC {
     return DependencyC("CC")
+  }
+
+  @Provides
+  @CDepend
+  fun provideDependencyCCC(): DependencyC {
+    return DependencyC("CCC")
   }
 
 }

@@ -8,12 +8,54 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="me.onez.androiddagger2.DemoActivity"
     >
 
-  <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="Hello World!"
-      />
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true"
+      android:layout_alignParentTop="true"
+      >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+      <Button
+          android:id="@+id/btn_no_dagger2"
+          android:layout_width="match_parent"
+          android:layout_height="44dp"
+          android:text="No Dagger2"
+          android:textAllCaps="false"
+          />
+
+      <Button
+          android:id="@+id/btn_simple_dagger2"
+          android:layout_width="match_parent"
+          android:layout_height="44dp"
+          android:text="Simple Dagger2"
+          android:textAllCaps="false"
+          />
+
+      <Button
+          android:id="@+id/btn_dep_dagger2"
+          android:layout_width="match_parent"
+          android:layout_height="44dp"
+          android:text="Dependency Dagger2"
+          android:textAllCaps="false"
+          />
+
+      <Button
+          android:id="@+id/btn_sub_dagger2"
+          android:layout_width="match_parent"
+          android:layout_height="44dp"
+          android:text="Subcomponent Dagger2"
+          android:textAllCaps="false"
+          />
+
+
+    </LinearLayout>
+  </ScrollView>
 </RelativeLayout>
