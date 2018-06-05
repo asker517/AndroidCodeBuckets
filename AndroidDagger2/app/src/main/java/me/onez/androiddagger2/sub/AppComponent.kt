@@ -10,6 +10,7 @@ import javax.inject.Singleton
 @Component(modules = [AppModule::class])
 interface AppComponent {
 
-    fun plus(prefsModule: PrefsModule): PrefsComponent
+  fun plus(prefsModule: PrefsModule): PrefsComponent
+
 
 }

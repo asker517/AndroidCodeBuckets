@@ -1,6 +1,7 @@
 package me.onez.androiddagger2
 
 import android.util.Log
+import me.onez.androiddagger2.dagger2.CDepend
 import me.onez.androiddagger2.misc.DependencyA
 import me.onez.androiddagger2.misc.DependencyB
 import me.onez.androiddagger2.misc.DependencyC
@@ -12,34 +13,34 @@ import javax.inject.Inject
 class Presenter(var d1: DependencyA?, var d2: DependencyB?, var d3: DependencyC?) {
 
 
-  @Inject
-  constructor() : this(null, null, null) {
-
-    Log.d("ZDT", "empty constructor called")
-
-  }
+//  @Inject
+//  constructor() : this(null, null, null) {
+//
+//    Log.d("ZDT", "empty constructor called")
+//
+//  }
 
   /**
    * 多个构造器只能标注其中一个
    */
 
-  //  @Inject
-  //  constructor(d1: DependencyA) : this(d1, null, null) {
-  //
-  //    dependencyA = d1
-  //    Log.d("ZDT", dependencyA.toString())
-  //  }
+//    @Inject
+//    constructor(d1: DependencyA) : this(d1, null, null) {
+//
+//      dependencyA = d1
+//      Log.d("ZDT", dependencyA.toString())
+//    }
 
 
-  //  @Inject
-  //  constructor(@Named("CC") d3: DependencyC) : this(null, null, d3) {
-  //    Log.d("ZDT", d3.toString())
-  //  }
+//    @Inject
+//    constructor(@Named("CC") d3: DependencyC) : this(null, null, d3) {
+//      Log.d("ZDT", d3.toString())
+//    }
 
-//  @Inject
-//  constructor(@CDepend d3: DependencyC) : this(null, null, d3) {
-//    Log.d("ZDT", d3.toString())
-//  }
+  @Inject
+  constructor(@CDepend d3: DependencyC) : this(null, null, d3) {
+    Log.d("ZDT", d3.toString())
+  }
 
   /**
    * 方法注入

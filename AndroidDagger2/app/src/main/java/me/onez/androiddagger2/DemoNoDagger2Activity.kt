@@ -8,6 +8,7 @@ import android.widget.Button
 import me.onez.androiddagger2.misc.DependencyA
 import me.onez.androiddagger2.misc.DependencyB
 import me.onez.androiddagger2.misc.DependencyC
+import me.onez.androiddagger2.test.TestActivity
 
 /**
  * <P>Created by Vincent on 2018/5/24.</P>
@@ -53,6 +54,10 @@ class DemoNoDagger2Activity : AppCompatActivity() {
 
     findViewById<Button>(R.id.btn_sub_dagger2).setOnClickListener {
       startActivity(Intent(this@DemoNoDagger2Activity, SubDagger2Activity::class.java))
+    }
+
+    findViewById<Button>(R.id.btn_test_dagger2).setOnClickListener {
+      startActivity(Intent(this@DemoNoDagger2Activity, TestActivity::class.java))
     }
 
   }

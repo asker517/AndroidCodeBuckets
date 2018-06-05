@@ -20,6 +20,7 @@
     <activity android:name=".SimpleDagger2Activity"/>
     <activity android:name=".DepDagger2Activity"/>
     <activity android:name=".SubDagger2Activity"/>
+    <activity android:name=".test.TestActivity"/>
   </application>
 
 </manifest>
