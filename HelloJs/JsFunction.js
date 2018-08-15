@@ -35,4 +35,42 @@ add();//1;
 add();//2;
 add();//3
 
+//map 变换
 
+function change(args) {
+    return args + 10;
+}
+
+var arr = [2, 4, 6];
+arr.map(change);
+arr.map(z => z * 8);
+
+//reduce
+function product(arr) {
+    return arr.reduce((x, y) => x * y);
+}
+
+if (product([1, 2, 3, 4]) === 24 && product([0, 1, 2]) === 0 && product([99, 88, 77, 66]) === 44274384) {
+    console.log('测试通过!');
+} else {
+    console.log('测试失败!');
+}
+
+//filter
+arr.filter(x => x % 2 == 0);
+arr.filter((Element, index, selft) => true);
+
+//闭包
+function close() {
+    var arr = [];
+    for (var i = 1; i <= 3; i++) {
+        arr.push(function () {
+            return i * i;
+        })
+    }
+    return arr;
+}
+var results = close(); //[function(){return i*i},function(){return i*i},function(){return i*i}]
+var r1 = results[0]; //r1() 16
+var r2 = results[1]; // r2() 16
+var r3 = results[2]; //r3() 16
