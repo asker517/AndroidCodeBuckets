@@ -10,7 +10,7 @@
 
 #### Your first coroutine
 
-```java
+```kotlin
 private fun simpleTest() {
     GlobalScope.launch {
 
@@ -37,7 +37,7 @@ private fun simpleTest() {
 `另一个区别是，协程不能在随机的指令中挂起，而只能在所谓的挂起点挂起，这会调用特别标记的函数。`
 
  `runBlocking`方法的操作是创建一个新的协程运行，并且阻塞当前线程，直到协程中的工作结束
-```
+```kotlin
 private fun blockingTest() {
     runBlocking {
 
@@ -57,7 +57,7 @@ private fun blockingTest() {
 ```
 #### Job
 当调用launch之后，会返回一个Job类型的对象来表示这项工作，我们可以使用job的join方法等待这个工作完成
-```
+```kotlin
 private fun jobTest() {
 
     runBlocking {
@@ -91,14 +91,14 @@ private fun jobTest() {
 
 #### suspend
 当我们调用标记有特殊修饰符 suspend 的函数时，会发生挂起:
-```
+```kotlin
 suspend fun doSomething(foo: Foo): Bar { …… }
 ```
 这样的函数称为挂起函数，因为调用它们可能挂起协程（如果相关调用的结果已经可用，库可以决定继续进行而不挂起）。挂起函数能够以与普通函数相同的方式获取参数与返回值，但它们只能从协程、其他挂起函数以及内联到其中的函数字面值中调用。
 
 #### 轻量级异步
 开启10000个协程:
-```
+```kotlin
 private fun coroutinesTest() {
     runBlocking {
       val jobs = List(10000) {
@@ -120,7 +120,7 @@ private fun coroutinesTest() {
 #### 停止协程 cancel
 - 我们可以在job上调用cancel() 或者cancelAndJoin停止一个协程
 - 协程的cancel和线程的cancel非常类似，它并不会强制停止协程，而是在协程运算结束的时候停止
-```
+```kotlin
 fun cancelTest()= runBlocking<Unit>{
     val startTime = System.currentTimeMillis()
     val job = launch {
@@ -141,7 +141,7 @@ fun cancelTest()= runBlocking<Unit>{
 }
 ```
 上面代码，协程重复循环，并且根据时间打印，此时，协程一直在进行工作占用cpu，当调用cancel之后不会立即停止，而是会等到运算结束。循环5次
-```
+```kotlin
 private fun cancelTest2() {
     runBlocking {
       val startTime = System.currentTimeMillis()
@@ -174,7 +174,7 @@ cancelTest1: Now I can quit.
 
 #### 超时
 对于一个协程，我们可以设置它的超时时间，所以相比于手动cancel，timeout或许拥有更好的效果。另外timeout和cancel一样，同样需要协程配合，在运算过程中无法停止。
-```
+```kotlin
  private fun cancelTest() {
 
     runBlocking {
@@ -212,21 +212,21 @@ cancelTest1: Now I can quit.
 
 #### 编写 suspending functions
 - 默认顺序执行
-```
+```kotlin
 private suspend fun oneThingNeedTime(): Int {
     Log.d(TAG, "oneThingNeedTime: one " + Thread.currentThread().name)
     delay(2000)
     return 20
   }
 ```
-```
+```kotlin
 private suspend fun moreThingNeedTime(): Int {
     Log.d(TAG, "oneThingNeedTime: more " + Thread.currentThread().name)
     delay(3000)
     return 40
   }
 ```
-```
+```kotlin
 private fun suspendTest() {
 
     GlobalScope.launch {
@@ -254,7 +254,7 @@ private fun suspendTest() {
 上述代码最终会耗时5s+
 
 - 异步并发
-```
+```kotlin
  private fun asyncTest() {
 
     runBlocking {
@@ -286,7 +286,7 @@ private fun suspendTest() {
 协程`dispatcher`r程序可以将协程执行限制在特定线程，将其分派给线程池，或让它无限制地运行。
 
 所有协程构建器，如launch和async 接受一个可选的CoroutineContext参数，可用于显式指定调度程序的新协程和其他上下文元素
-```
+```kotlin
 private fun dispatcherTest() {
     runBlocking {
       val jobs = arrayListOf<Job>()
@@ -344,7 +344,7 @@ newSingleThreadContext: dispatchSingleThread
 
 - 通过`CoroutineScope`接口在任何协程的块内可用的`coroutineContext`属性是对此特定协程的上下文的引用。这样，可以继承父上下文。 `runBlocking`协同程序的默认调度程序特别限于调用程序线程，因此继承它的作用是通过可预测的FIFO调度将执行限制在该线程中
 
-```
+```kotlin
 private fun unconfinedTest() {
     runBlocking {
       val jobs = arrayListOf<Job>()
@@ -387,7 +387,7 @@ private fun unconfinedTest() {
 
 #### 协程线程跳转
 
-```
+```kotlin
 private fun coroutinesJumping() {
     newSingleThreadContext("ctx1").use { ctx1 ->
       newSingleThreadContext("ctx2").use { ctx2 ->
