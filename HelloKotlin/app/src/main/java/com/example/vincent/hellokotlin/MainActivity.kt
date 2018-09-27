@@ -10,6 +10,7 @@ import kotlin.system.measureTimeMillis
 
 /**
  * https://my.oschina.net/zzxzzg/blog/1612992
+ * https://cdn2.jianshu.io/p/3ffc11978602
  */
 class MainActivity : AppCompatActivity() {
 
@@ -19,18 +20,23 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
-    findViewById<TextView>(R.id.tv_test).setOnClickListener {
-      //      simpleTest()
-      //      blockingTest()
-      //      jobTest()
-      //      diffThreadTest()
-      cancelTest()
+
+    findViewById<TextView>(R.id.tv_test).onClick {
+      delay(500)
+      Log.d(TAG, "TextView: click")
     }
 
 
     findViewById<Button>(R.id.btn_test).setOnClickListener {
       //      suspendTest()
-      asyncTest()
+      //      asyncTest()
+      //      Log.d(TAG, "Button: click")
+      //      coroutinesTest()
+      //      cancelTest1()
+      //      cancelTest2()
+      //      dispatcherTest()
+      //      unconfinedTest()
+      coroutinesJumping()
     }
   }
 
@@ -68,7 +74,7 @@ class MainActivity : AppCompatActivity() {
       Log.d(TAG, "blockingTest: " + Thread.currentThread().name + " after delay codes")
     }
 
-    //blockingTest: main out of coroutines
+    //3 blockingTest: main out of coroutines
     Log.d(TAG, "blockingTest: " + Thread.currentThread().name + " out of coroutines")
 
   }
@@ -148,6 +154,7 @@ class MainActivity : AppCompatActivity() {
 
     runBlocking {
 
+
       try {
         withTimeout(2000) {
           try {
@@ -212,7 +219,7 @@ class MainActivity : AppCompatActivity() {
       }
 
       //4 cost 5006 msForkJoinPool.commonPool-worker-2
-      Log.d(TAG, "suspendTest: cost $time ms " + Thread.currentThread().name);
+      Log.d(TAG, "suspendTest: cost $time ms " + Thread.currentThread().name)
     }
 
     //1 main
@@ -243,5 +250,143 @@ class MainActivity : AppCompatActivity() {
 
   }
 
+  private fun coroutinesTest() {
+    runBlocking {
+      val jobs = List(10000) {
+        launch {
 
+          Log.d(TAG, "coroutinesTest1: " + Thread.activeCount())
+
+          delay(1000)
+
+          Log.d(TAG, "..")
+        }
+      }
+      jobs.forEach { it.join() }
+    }
+  }
+
+  private fun cancelTest1() {
+    runBlocking {
+      val startTime = System.currentTimeMillis()
+      val job = GlobalScope.launch {
+        var nextPrintTime = startTime
+        var i = 0
+        while (i < 5) { // 循环计算，只是浪费CPU
+          // 每秒打印2次信息
+          if (System.currentTimeMillis() >= nextPrintTime) {
+            println("I'm sleeping ${i++} ...")
+            nextPrintTime += 500L
+          }
+        }
+      }
+      delay(1300L) // delay a bit
+      println("cancelTest1: I'm tired of waiting!")
+      job.cancelAndJoin() // cancels the job and waits for its completion
+      println("cancelTest1: Now I can quit.")
+    }
+  }
+
+  private fun cancelTest2() {
+    runBlocking {
+      val startTime = System.currentTimeMillis()
+      val job = GlobalScope.launch {
+        var nextPrintTime = startTime
+        var i = 0
+        while (isActive) { // cancellable computation loop
+          // 每秒打印2次信息
+          if (System.currentTimeMillis() >= nextPrintTime) {
+            println("I'm sleeping ${i++} ...")
+            nextPrintTime += 500L
+          }
+        }
+      }
+      delay(1300L) // delay a bit
+      println("cancelTest1: I'm tired of waiting!")
+      job.cancelAndJoin() // cancels the job and waits for its completion
+      println("cancelTest1: Now I can quit.")
+    }
+  }
+
+  private fun dispatcherTest() {
+    runBlocking {
+      val jobs = arrayListOf<Job>()
+
+      // context of the parent, main runBlocking coroutine
+      jobs += launch {
+        println("none: " + Thread.currentThread().name)
+      }
+
+      // not confined -- will work with main thread
+      jobs += launch(Dispatchers.Unconfined) {
+        println("Unconfined: " + Thread.currentThread().name)
+      }
+
+      // will get dispatched to ForkJoinPool.commonPool (or equivalent)
+      jobs += launch(Dispatchers.Default) {
+        println("Default: " + Thread.currentThread().name)
+      }
+
+      //will get dispatched to CoroutineScheduler
+      jobs += launch(Dispatchers.IO) {
+        println("IO: " + Thread.currentThread().name)
+      }
+
+      jobs += launch(coroutineContext) {
+        println("coroutineContext: " + Thread.currentThread().name)
+      }
+
+      // will get its own new thread
+      jobs += launch(newSingleThreadContext("dispatchSingleThread")) {
+        println("newSingleThreadContext: " + Thread.currentThread().name)
+      }
+
+      jobs.forEach { it.join() }
+    }
+  }
+
+  private fun unconfinedTest() {
+    runBlocking {
+      val jobs = arrayListOf<Job>()
+
+      jobs += launch {
+        // not confined -- will work with main thread
+        println("      'none': I'm working in thread ${Thread.currentThread().name}")
+        delay(500)
+        println("      'none': After delay in thread ${Thread.currentThread().name}")
+      }
+
+      jobs += launch(Dispatchers.Unconfined) {
+        // not confined -- will work with main thread
+        println("      'Unconfined': I'm working in thread ${Thread.currentThread().name}")
+        delay(500)
+        println("      'Unconfined': After delay in thread ${Thread.currentThread().name}")
+      }
+
+      jobs += launch(coroutineContext) {
+        // context of the parent, runBlocking coroutine
+        println("'coroutineContext': I'm working in thread ${Thread.currentThread().name}")
+        delay(1000)
+        println("'coroutineContext': After delay in thread ${Thread.currentThread().name}")
+      }
+      jobs.forEach { it.join() }
+    }
+
+  }
+
+  fun log(msg: String) = println("[${Thread.currentThread().name}] $msg")
+
+  private fun coroutinesJumping() {
+    newSingleThreadContext("ctx1").use { ctx1 ->
+      newSingleThreadContext("ctx2").use { ctx2 ->
+        runBlocking(ctx1) {
+          log("start in ctx1")
+          withContext(ctx2) {
+            log("working in ctx2")
+          }
+          log("back to ctx1")
+        }
+      }
+    }
+  }
 }
