@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.android.Main
 import kotlin.system.measureTimeMillis
 
 /**
@@ -36,7 +37,8 @@ class MainActivity : AppCompatActivity() {
       //      cancelTest2()
       //      dispatcherTest()
       //      unconfinedTest()
-      coroutinesJumping()
+      //      coroutinesJumping()
+      simpleTest()
     }
   }
 
@@ -44,7 +46,7 @@ class MainActivity : AppCompatActivity() {
    * simple launch test
    */
   private fun simpleTest() {
-    GlobalScope.launch {
+    GlobalScope.launch(Dispatchers.Main) {
 
       //2 ForkJoinPool.commonPool-worker-1
       Log.d(TAG, "simpleTest: " + Thread.currentThread().name)
